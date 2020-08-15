@@ -7,7 +7,7 @@ class MusicCog(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
     self.bot.music = lavalink.Client(self.bot.user.id)
-    self.bot.music.add_node('localhost', 7000, 'testing12', 'na', 'music-node')
+    self.bot.music.add_node('localhost', 2333, 'youshallnotpass', 'na', 'music-node')
     self.bot.add_listener(self.bot.music.voice_update_handler, 'on_socket_response')
     self.bot.music.add_event_hook(self.track_hook)
 
@@ -24,6 +24,13 @@ class MusicCog(commands.Cog):
 
   @commands.command(name='play')
   async def play(self, ctx, *, query):
+    member = utils.find(lambda m: m.id == ctx.author.id, ctx.guild.members)
+    if member is not None and member.voice is not None:
+      vc = member.voice.channel
+      player = self.bot.music.player_manager.create(ctx.guild.id, endpoint=str(ctx.guild.region))
+      if not player.is_connected:
+        player.store('channel', ctx.channel.id)
+        await self.connect_to(ctx.guild.id, str(vc.id))
     try:
       player = self.bot.music.player_manager.get(ctx.guild.id)
       query = f'ytsearch:{query}'
@@ -35,6 +42,7 @@ class MusicCog(commands.Cog):
         i = i + 1
         query_result = query_result + f'{i}) {track["info"]["title"]} - {track["info"]["uri"]}\n'
       embed = Embed()
+      embed.title = 'Here are the search results'
       embed.description = query_result
 
       await ctx.channel.send(embed=embed)
@@ -60,6 +68,17 @@ class MusicCog(commands.Cog):
   async def connect_to(self, guild_id: int, channel_id: str):
     ws = self.bot._connection._get_websocket(guild_id)
     await ws.voice_state(str(guild_id), channel_id)
+
+  @commands.command(name='leave')
+  async def leave(self, ctx):
+    print('join command worked')
+    member = utils.find(lambda m: m.id == ctx.author.id, ctx.guild.members)
+    if member is not None and member.voice is not None:
+      vc = member.voice.channel
+      player = self.bot.music.player_manager.create(ctx.guild.id, endpoint=str(ctx.guild.region))
+      if not player.is_connected:
+        player.store('channel', ctx.channel.id)
+        await self.disconnect(ctx.guild.id, str(vc.id))
 
 def setup(bot):
   bot.add_cog(MusicCog(bot))

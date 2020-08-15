@@ -45,5 +45,4 @@ async def udaw(ctx):
 
 
 
-client.load_extension('cogs.music')
 client.run(os.environ['token'])

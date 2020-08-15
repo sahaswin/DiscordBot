@@ -8,6 +8,8 @@ client = commands.Bot(command_prefix = ".")
 @client.event
 async def on_ready():
     print("Bot is ready")
+    client.load_extension('cogs.music')
+
 
 @client.command()
 async def ado(ctx):
@@ -43,7 +45,5 @@ async def udaw(ctx):
 
 
 
-
 client.load_extension('cogs.music')
-
 client.run(os.environ['token'])

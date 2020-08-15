@@ -1,1 +1,1 @@
-worker: python sharkybot.py
+worker: python bot.py

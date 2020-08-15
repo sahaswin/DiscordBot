@@ -2,8 +2,6 @@ import discord
 from discord.ext import commands
 from discord.utils import get
 import os
-import youtube_dl
-
 
 client = commands.Bot(command_prefix = ".")
 
@@ -44,4 +42,5 @@ async def udaw(ctx):
 
     await ctx.send(embed=embed)
 
-client.run('NzQyOTM4Nzk5OTczMzM1MDcx.XzNZrQ.3ITCrVd3LoSzJwdXiRRpwP_AuC0')
+
+client.run(os.environ['token'])
